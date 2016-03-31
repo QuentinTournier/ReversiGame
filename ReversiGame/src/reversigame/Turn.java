@@ -35,7 +35,6 @@ public class Turn {
     }
     
     
-    
     public boolean playableBox(int i,int j){
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){

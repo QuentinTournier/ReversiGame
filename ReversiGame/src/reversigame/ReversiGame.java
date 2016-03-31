@@ -17,8 +17,8 @@ public class ReversiGame {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Board board=new Board();
-        board.affiche();
+        Game game=new Game();
+        game.doGame();
     }
     
 }
