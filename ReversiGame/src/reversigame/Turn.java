@@ -143,6 +143,48 @@ public class Turn {
         return (!playableBoxes().isEmpty());
     }
 
+    public void playBox(int i,int j){
+        if(board.getGame()[i][j].isEmpty()){
+            for(int iInc=-1;iInc<2;iInc++){
+                for(int jInc=-1;jInc<2;jInc++){
+                    playBoxDirection(i,j,iInc,jInc);
+                }
+            }      
+        }
+    }
+   
+    public void playBoxDirection(int i, int j,int iInc,int jInc){
+        int value=cont.getValue();
+        if (jInc==0 && iInc==0)
+            return;
+        i+=iInc;
+        j+=jInc;
+        if(i<0 || i>7 ||j<0 || j>7){
+            return;
+        }
+        else{
+            if(board.getGame()[i][j].getPawn()==0 || board.getGame()[i][j].getPawn()==value)
+                return;
+            else{
+                i+=iInc;
+                j+=jInc;
+                while(!(i<0 || i>7 ||j<0 || j>7)){
+                    int pawn=board.getGame()[i][j].getPawn();
+                    if (pawn==0)
+                        return;
+                    else if (pawn== value)
+                        return;
+                    else {
+                        board.getGame()[i][j].reversi();
+                        i+=iInc;
+                        j+=jInc;
+                    }   
+                }
+                return; 
+            }
+        }
+    }
+
 
 
 }
