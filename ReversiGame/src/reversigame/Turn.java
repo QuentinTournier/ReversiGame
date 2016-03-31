@@ -41,7 +41,7 @@ public class Turn {
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
                     if(playableBoxDirection(i,j,iInc,jInc)){
-                return true;
+                        return true;
                     }
                 }
             }      
@@ -83,6 +83,7 @@ public class Turn {
     
     public void doTurn(){
         boolean done=false;
+        int [] tab;
         this.display();
         ArrayList <Integer> playable=playableBoxes();
         System.out.println("Positions jouables:");
@@ -90,20 +91,16 @@ public class Turn {
             System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
         }  
         System.out.println("Choisissez où jouer");
-        while (!done){
             if(cont instanceof HumanController)
-                done= chosePlaceTextHuman();
+                tab = chosePlaceTextHuman();
             else{
-                done= chosePlaceTextHuman();
-            }
-            if(!done){
-                System.out.println("mauvais choix");
-            }
-                  
-        }     
+                tab= chosePlaceTextHuman();         
+        }
+            playBox(tab[0],tab[1]);
+        
     }
 
-    private boolean chosePlaceTextHuman() {
+    private int[] chosePlaceTextHuman() {
         ArrayList <Integer> playable=playableBoxes();
         Scanner sc = new Scanner(System.in);
         String str = sc.nextLine();
@@ -113,12 +110,16 @@ public class Turn {
         
         for(int i=0;i<playable.size();i+=2){
             if(val1==playable.get(i)){
-                if (val2==playable.get(i+1))
-                    return true;
+                if (val2==playable.get(i+1)){
+                    int tab[]={val1,val2};
+                    return tab;
+                }
             }
         }
-        return false;
+        System.out.println("mauvais choix");
+        return chosePlaceTextHuman();
     }
+    
     public void display(){
         System.out.println("\n   0 1 2 3 4 5 6 7");
         for(int i=0;i<8;i++){
@@ -143,48 +144,37 @@ public class Turn {
         return (!playableBoxes().isEmpty());
     }
 
-    public void playBox(int i,int j){
+
+    public void playBox(int i, int j){
+        int iBoucle;
+        int jBoucle;
+        ArrayList <Integer> direction=playableBoxAllDirection(i,j);
+        board.getGame()[i][j].affect(cont.getValue());
+        for (int nb=0;nb<direction.size();nb+=2){
+            iBoucle=i+direction.get(nb);
+            jBoucle=j+direction.get(nb+1);        
+            do{
+                board.getGame()[iBoucle][jBoucle].reversi();
+                iBoucle+=direction.get(nb);
+                jBoucle+=direction.get(nb+1);
+            }while(board.getGame()[iBoucle][jBoucle].getPawn()!=cont.getValue()&& board.getGame()[iBoucle][jBoucle].getPawn()!=0);
+        }
+    }
+    
+    public ArrayList<Integer> playableBoxAllDirection(int i,int j){
+        ArrayList<Integer> tab=new ArrayList();
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
-                    playBoxDirection(i,j,iInc,jInc);
+                    if(playableBoxDirection(i,j,iInc,jInc)){
+                        tab.add(iInc);
+                        tab.add(jInc);
+                    }
                 }
             }      
         }
+        return tab;
     }
-   
-    public void playBoxDirection(int i, int j,int iInc,int jInc){
-        int value=cont.getValue();
-        if (jInc==0 && iInc==0)
-            return;
-        i+=iInc;
-        j+=jInc;
-        if(i<0 || i>7 ||j<0 || j>7){
-            return;
-        }
-        else{
-            if(board.getGame()[i][j].getPawn()==0 || board.getGame()[i][j].getPawn()==value)
-                return;
-            else{
-                i+=iInc;
-                j+=jInc;
-                while(!(i<0 || i>7 ||j<0 || j>7)){
-                    int pawn=board.getGame()[i][j].getPawn();
-                    if (pawn==0)
-                        return;
-                    else if (pawn== value)
-                        return;
-                    else {
-                        board.getGame()[i][j].reversi();
-                        i+=iInc;
-                        j+=jInc;
-                    }   
-                }
-                return; 
-            }
-        }
-    }
-
 
 
 }

@@ -12,4 +12,5 @@ package reversigame;
  */
 public interface Controller {
     public int getValue();   
+   
 }

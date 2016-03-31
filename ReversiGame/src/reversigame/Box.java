@@ -38,7 +38,7 @@ public class Box {
     public void reversi(){
             if (pawn==1)
                 pawn=2;
-            if(pawn==2)
+            else if(pawn==2)
                 pawn=1;        
     }
 

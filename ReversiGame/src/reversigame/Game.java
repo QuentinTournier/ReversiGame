@@ -34,6 +34,10 @@ public class Game {
         
         }while(turn1.canPlay() || turn2.canPlay());
     }
+
+    public Board getBoard() {
+        return board;
+    }
     
     
     
