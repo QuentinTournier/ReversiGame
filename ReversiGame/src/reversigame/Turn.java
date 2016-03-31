@@ -7,6 +7,7 @@
 package reversigame;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -78,5 +79,71 @@ public class Turn {
             }
         }
     }
+    
+    
+    public void doTurn(){
+        boolean done=false;
+        this.display();
+        ArrayList <Integer> playable=playableBoxes();
+        System.out.println("Positions jouables:");
+        for(int i = 0; i < playable.size(); i+=2) {   
+            System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
+        }  
+        System.out.println("Choisissez où jouer");
+        while (!done){
+            if(cont instanceof HumanController)
+                done= chosePlaceTextHuman();
+            else{
+                done= chosePlaceTextHuman();
+            }
+            if(!done){
+                System.out.println("mauvais choix");
+            }
+                  
+        }     
+    }
+
+    private boolean chosePlaceTextHuman() {
+        ArrayList <Integer> playable=playableBoxes();
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        int val1 = Integer.parseInt(str);
+        String str2 = sc.nextLine();
+        int val2 = Integer.parseInt(str2);
+        
+        for(int i=0;i<playable.size();i+=2){
+            if(val1==playable.get(i)){
+                if (val2==playable.get(i+1))
+                    return true;
+            }
+        }
+        return false;
+    }
+    public void display(){
+        System.out.println("\n   0 1 2 3 4 5 6 7");
+        for(int i=0;i<8;i++){
+            System.out.print(i+"  ");
+            for(int j=0;j<8;j++){
+                if(board.getGame()[i][j].getPawn()==0)
+                    if (playableBox(i,j))
+                        System.out.print("+ ");
+                    else
+                        System.out.print("- ");
+                if(board.getGame()[i][j].getPawn()==1)
+                    System.out.print("X ");
+                if(board.getGame()[i][j].getPawn()==2)
+                    System.out.print("O ");
+            }
+            System.out.println();
+        }
+        
+    }
+    
+    public boolean canPlay(){
+        return (!playableBoxes().isEmpty());
+    }
+
+
+
 }
 

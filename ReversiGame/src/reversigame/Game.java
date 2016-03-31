@@ -16,7 +16,8 @@ public class Game {
     private Controller c1;
     private Controller c2;
     private Board board;
-    private Boolean turn;
+    private Turn turn1;
+    private Turn turn2;
 
     public Game() {
         board= new Board();
@@ -25,14 +26,13 @@ public class Game {
     }
     
     public void doGame(){
-        Turn turn= new Turn(c1,board);
-        ArrayList<Integer> playable=turn.playableBoxes();
-        board.affiche();
-        System.out.println("Positions jouables:");
-        for(int i = 0; i < playable.size(); i+=2) {   
-            System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
-        }  
+        do{
+            turn1= new Turn(c1,board);
+            turn1.doTurn();
+            turn2= new Turn(c2,board);
+            turn2.doTurn();
         
+        }while(turn1.canPlay() || turn2.canPlay());
     }
     
     
