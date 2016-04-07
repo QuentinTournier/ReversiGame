@@ -94,7 +94,7 @@ public class Turn {
             if(cont instanceof HumanController)
                 tab = chosePlaceTextHuman();
             else{
-                tab= chosePlaceTextHuman();         
+                tab= chosePlaceTextAI();         
         }
             playBox(tab[0],tab[1]);
         
@@ -119,6 +119,7 @@ public class Turn {
         System.out.println("mauvais choix");
         return chosePlaceTextHuman();
     }
+    
     
     public void display(){
         System.out.println("\n   0 1 2 3 4 5 6 7");
@@ -175,7 +176,59 @@ public class Turn {
         }
         return tab;
     }
+    
+    public boolean isCorner(int i,int j){
+        if(i==0 || i==7)
+            if(j==0 || j==7)
+                return true;
+        return false;
+    }
+    
+     public ArrayList countBox (){
+         ArrayList<Integer> tab=playableBoxes();
+         ArrayList<Integer> countBoxes=new ArrayList();
+         for(int i=0;i<tab.size();i+=2){
+             countBoxes.add(tab.get(i));
+             countBoxes.add(tab.get(i+1));
+             countBoxes.add(count(tab.get(i),tab.get(i+1)));    
+         }
+         return countBoxes;
+     }
+    
+    public int count (int i,int j){
+        int count=0;
+        ArrayList<Integer> countTab=new ArrayList();
+        if(board.getGame()[i][j].isEmpty()){
+            for(int iInc=-1;iInc<2;iInc++){
+                for(int jInc=-1;jInc<2;jInc++){
+                    count+=countBoxDirection(i,j,iInc,jInc);
+                }
+            }      
+        }
+        return count;
+    }
 
+    public int countBoxDirection(int i, int j,int iInc,int jInc){
+        int value=cont.getValue();
+        int count=0;
+            if (playableBoxDirection(i,j,iInc,jInc)){
+                i+=iInc;
+                j+=jInc;
+                while(!(i<0 || i>7 ||j<0 || j>7)){
+                    int pawn=board.getGame()[i][j].getPawn();
+                    if (pawn==0)
+                        return count;
+                    else if (pawn== value)
+                        return count;
+                    else {
+                        i+=iInc;
+                        j+=jInc;
+                        count ++;
+                    }   
+                }
+            }
+            return count;
+    }
 
 }
 

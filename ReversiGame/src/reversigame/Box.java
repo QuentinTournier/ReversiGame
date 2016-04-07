@@ -21,6 +21,9 @@ public class Box {
     public Box(int pawn) {
         this.pawn = pawn;
     }
+    public void reset(){
+        this.pawn=0;
+    }
     
     public Boolean isEmpty(){
         return (pawn==0);

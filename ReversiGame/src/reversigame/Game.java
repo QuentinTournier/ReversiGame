@@ -22,7 +22,7 @@ public class Game {
     public Game() {
         board= new Board();
         c1=new HumanController(1);
-        c2=new HumanController(2);
+        c2=new AIController(2);
     }
     
     public void doGame(){
