@@ -94,7 +94,7 @@ public class Turn {
             if(cont instanceof HumanController)
                 tab = chosePlaceTextHuman();
             else{
-                tab= chosePlaceTextAI();         
+                tab= chosePlaceAI1();         
         }
             playBox(tab[0],tab[1]);
         
@@ -118,6 +118,20 @@ public class Turn {
         }
         System.out.println("mauvais choix");
         return chosePlaceTextHuman();
+    }
+    
+    private int[] chosePlaceAI1() {
+        ArrayList<Integer> countBox = countBox();
+        int[] play = new int[2];
+        int max = -1;
+        for (int i = 0; i < countBox.size(); i+=3) {
+            if (countBox.get(i+2) > max) {
+                play[0] = countBox.get(i);
+                play[1] = countBox.get(i+1);
+                max = countBox.get(i+2);
+            }
+        }
+        return play;
     }
     
     
