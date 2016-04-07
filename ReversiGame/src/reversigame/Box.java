@@ -48,6 +48,12 @@ public class Box {
     public int getPawn() {
         return pawn;
     }
+
+    public void setPawn(int pawn) {
+        this.pawn = pawn;
+    }
+    
+    
     
     
     
