@@ -36,7 +36,7 @@ public class Board {
         return game[i][j];
     }
     
-    public void affiche(){
+    public void display(){
         System.out.println("\n   0 1 2 3 4 5 6 7");
         for(int i=0;i<8;i++){
             System.out.print(i+"  ");
@@ -69,5 +69,15 @@ public class Board {
                game[i][j].setPawn(tab[i][j]);
            }   
         }
+    }
+    
+    public int[] score() {
+        int[] score = new int[3];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                score[game[i][j].getPawn()]++;
+            }
+        }
+        return score;
     }
 }
