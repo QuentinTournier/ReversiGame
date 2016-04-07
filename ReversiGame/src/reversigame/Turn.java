@@ -147,7 +147,7 @@ public class Turn {
             for(int j=0;j<8;j++){
                 if(board.getGame()[i][j].getPawn()==0)
                     if (playableBox(i,j))
-                        System.out.print("+ ");
+                        System.out.print(count(i,j,true)+" ");
                     else
                         System.out.print("- ");
                 if(board.getGame()[i][j].getPawn()==1)
@@ -217,6 +217,8 @@ public class Turn {
     public int count (int i,int j,boolean turn){
         int count=0;
         int value=cont.getValue();
+        if(oobBox(i,j))
+            return 0;
         //turn=true if the current player plays
         if(!turn){
             if(value==1){
@@ -229,7 +231,7 @@ public class Turn {
             count-=countIfHere(i,j);
         //We change the value if the place is good
         
-            count+=countPosition(i,j);
+        count+=countPosition(i,j);
         ArrayList<Integer> countTab=new ArrayList();
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
@@ -302,5 +304,10 @@ public class Turn {
         return countCurr/2;
     }
 
+       public boolean oobBox(int i, int j){
+           if(i<0||i>7||j>7||j<0)
+               return true;
+           return false;
+       }
 }
 
