@@ -22,11 +22,11 @@ public class Turn {
         this.board = board;
     }
     
-    public ArrayList playableBoxes(){
+    public ArrayList playableBoxes(int value){
         ArrayList<Integer> tab=new ArrayList();
         for (int i=0; i<8; i++){
             for (int j=0; j<8; j++)
-                if (playableBox(i,j)){
+                if (playableBox(i,j,value)){
                     tab.add(i);
                     tab.add(j);      
                 }
@@ -36,11 +36,11 @@ public class Turn {
     }
     
     
-    public boolean playableBox(int i,int j){
+    public boolean playableBox(int i,int j,int value){
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
-                    if(playableBoxDirection(i,j,iInc,jInc)){
+                    if(playableBoxDirection(i,j,iInc,jInc,value)){
                         return true;
                     }
                 }
@@ -49,8 +49,7 @@ public class Turn {
         return false;
     }
    
-    public boolean playableBoxDirection(int i, int j,int iInc,int jInc){
-        int value=cont.getValue();
+    public boolean playableBoxDirection(int i, int j,int iInc,int jInc,int value){    
         if (jInc==0 && iInc==0)
             return false;
         i+=iInc;
@@ -85,7 +84,7 @@ public class Turn {
         boolean done=false;
         int [] tab;
         this.display();
-        ArrayList <Integer> playable=playableBoxes();
+        ArrayList <Integer> playable=playableBoxes(cont.getValue());
         System.out.println("Positions jouables:");
         for(int i = 0; i < playable.size(); i+=2) {   
             System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
@@ -106,7 +105,7 @@ public class Turn {
     }
 
     private int[] chosePlaceTextHuman() {
-        ArrayList <Integer> playable=playableBoxes();
+        ArrayList <Integer> playable=playableBoxes(cont.getValue());
         Scanner sc = new Scanner(System.in);
         String str = sc.nextLine();
         int val1 = Integer.parseInt(str);
@@ -126,9 +125,11 @@ public class Turn {
     }
     
     private int[] chosePlaceAI1() {
-        ArrayList<Integer> countBox = countBox();
+        ArrayList<Integer> countBox = countBox(cont.getValue());
         int[] play = new int[2];
-        int max = -1;
+        play[0] = (int)Math.round(countBox.get(0));
+        play[1] = (int)Math.round(countBox.get(1));
+        float max = countBox.get(2);
         for (int i = 0; i < countBox.size(); i+=3) {
             if (countBox.get(i+2) > max) {
                 play[0] = countBox.get(i);
@@ -146,7 +147,7 @@ public class Turn {
             System.out.print(i+"  ");
             for(int j=0;j<8;j++){
                 if(board.getGame()[i][j].getPawn()==0)
-                    if (playableBox(i,j)){
+                    if (playableBox(i,j,cont.getValue())){
                         if(cont instanceof HumanController)
                             System.out.print("+ ");
                         else
@@ -165,7 +166,7 @@ public class Turn {
     }
     
     public boolean canPlay(){
-        return (!playableBoxes().isEmpty());
+        return (!playableBoxes(cont.getValue()).isEmpty());
     }
 
 
@@ -190,7 +191,7 @@ public class Turn {
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
-                    if(playableBoxDirection(i,j,iInc,jInc)){
+                    if(playableBoxDirection(i,j,iInc,jInc,cont.getValue())){
                         tab.add(iInc);
                         tab.add(jInc);
                     }
@@ -207,19 +208,20 @@ public class Turn {
         return false;
     }
     
-     public ArrayList countBox (){
-         ArrayList<Integer> tab=playableBoxes();
-         ArrayList<Integer> countBoxes=new ArrayList();
+     public ArrayList countBox (int value){
+         ArrayList<Integer> tab=playableBoxes(value);
+         ArrayList<Float> countBoxes=new ArrayList();
          for(int i=0;i<tab.size();i+=2){
-             countBoxes.add(tab.get(i));
-             countBoxes.add(tab.get(i+1));
+             countBoxes.add((float)tab.get(i));
+             countBoxes.add((float)tab.get(i+1));
              countBoxes.add(count(tab.get(i),tab.get(i+1),true));    
          }
          return countBoxes;
      }
     
-    public int count (int i,int j,boolean turn){
-        int count=0;
+    //return the score of the box
+    public float count (int i,int j,boolean turn){
+        float count=0;
         int value=cont.getValue();
         if(oobBox(i,j))
             return 0;
@@ -232,7 +234,7 @@ public class Turn {
                 value=1;
         }
         else
-            count-=countIfHere(i,j,3);
+            count-=countIfHere(i,j,3,cont.getValue());
         //We change the value if the place is good
         
         count+=countPosition(i,j);
@@ -249,7 +251,7 @@ public class Turn {
 
     public int countBoxDirection(int i, int j,int iInc,int jInc,int value){
         int count=0;
-            if (playableBoxDirection(i,j,iInc,jInc)){
+            if (playableBoxDirection(i,j,iInc,jInc,value)){
                 i+=iInc;
                 j+=jInc;
                 while(!(i<0 || i>7 ||j<0 || j>7)){
@@ -291,18 +293,23 @@ public class Turn {
             return false;
     
     }
-       public int countIfHere(int i,int j,int tour){
+       public float countIfHere(int i,int j,int tour,int value){
         //on compte le score maximal que peut faire l'adversaire
         int tab[][]=board.save();
+        int iPlay=0;
+        int jPlay=0;
         playBox(i,j);
-        int count=0;
-        int countCurr=0;
-        for(int iInc=-1;iInc<2;iInc++){
-            for(int jInc=-1;jInc<2;jInc++){
-                count=count(i+iInc,j+jInc,false);
+        float count=0;
+        float countCurr=0;
+        ArrayList<Integer> possibleMoves=playableBoxes(reverse(value));
+        for(int iMove=0;iMove<possibleMoves.size();iMove+=2){
+                iPlay=possibleMoves.get(iMove);
+                jPlay=possibleMoves.get(iMove+1);
+                count=count(iPlay,jPlay,false);
+                if(value >=0)
+                    count+=countIfHere(iPlay,jPlay,reverse(tour),--value);
                 if (count>countCurr)
-                    countCurr=count;
-            }
+                    countCurr=count;     
         }
         board.reset(tab);
         return countCurr/2;
@@ -312,6 +319,14 @@ public class Turn {
            if(i<0||i>7||j>7||j<0)
                return true;
            return false;
+       }
+       
+       public int reverse(int value){
+           if (value==1)
+               return 2;
+           else if (value==2)
+               return 1;
+           else return 0;
        }
 }
 
