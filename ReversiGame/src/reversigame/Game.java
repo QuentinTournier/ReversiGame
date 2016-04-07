@@ -35,6 +35,15 @@ public class Game {
                 turn2.doTurn();
         
         }while(turn1.canPlay() || turn2.canPlay());
+        
+        board.display();
+        int score1 = board.score()[1];
+        int score2 = board.score()[2];
+        System.out.println("\nScore: " + score1 + " - " + score2);
+        if (score1 == score2)
+            System.out.println("Tie game");
+        else
+            System.out.println("Player " + ((score1>score2)?1:2) + " wins !");
     }
 
     public Board getBoard() {
