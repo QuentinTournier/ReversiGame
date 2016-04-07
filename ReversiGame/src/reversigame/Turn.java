@@ -6,6 +6,7 @@
 
 package reversigame;
 
+import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -120,6 +121,21 @@ public class Turn {
         return chosePlaceTextHuman();
     }
     
+    
+    // AI0 choses a random position among those available.
+    private int[] chosePlaceAI0() {
+        ArrayList <Integer> playable=playableBoxes();
+        int[] play = new int[2];
+        int place = (int)(random()*playable.size()/2)*2;
+        play[0] = playable.get(place);
+        play[1] = playable.get(place+1);
+        
+        return play;
+    }
+    
+    
+    
+    // AI1 choses the position which captures the most pawns.
     private int[] chosePlaceAI1() {
         ArrayList<Integer> countBox = countBox();
         int[] play = new int[2];
