@@ -146,8 +146,12 @@ public class Turn {
             System.out.print(i+"  ");
             for(int j=0;j<8;j++){
                 if(board.getGame()[i][j].getPawn()==0)
-                    if (playableBox(i,j))
-                        System.out.print(count(i,j,true)+" ");
+                    if (playableBox(i,j)){
+                        if(cont instanceof HumanController)
+                            System.out.print("+ ");
+                        else
+                            System.out.print(count(i,j,true)+" ");
+                    }                       
                     else
                         System.out.print("- ");
                 if(board.getGame()[i][j].getPawn()==1)
@@ -228,7 +232,7 @@ public class Turn {
                 value=1;
         }
         else
-            count-=countIfHere(i,j);
+            count-=countIfHere(i,j,3);
         //We change the value if the place is good
         
         count+=countPosition(i,j);
@@ -287,7 +291,7 @@ public class Turn {
             return false;
     
     }
-       public int countIfHere(int i,int j){
+       public int countIfHere(int i,int j,int tour){
         //on compte le score maximal que peut faire l'adversaire
         int tab[][]=board.save();
         playBox(i,j);

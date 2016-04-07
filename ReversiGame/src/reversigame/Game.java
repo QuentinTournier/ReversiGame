@@ -28,9 +28,11 @@ public class Game {
     public void doGame(){
         do{
             turn1= new Turn(c1,board);
-            turn1.doTurn();
+            if(turn1.canPlay())        
+                turn1.doTurn();
             turn2= new Turn(c2,board);
-            turn2.doTurn();
+            if(turn2.canPlay())        
+                turn2.doTurn();
         
         }while(turn1.canPlay() || turn2.canPlay());
     }
