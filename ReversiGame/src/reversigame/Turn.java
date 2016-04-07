@@ -94,6 +94,11 @@ public class Turn {
             if(cont instanceof HumanController)
                 tab = chosePlaceTextHuman();
             else{
+                try {
+                    Thread.sleep(3000);     //milliseconds
+                } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                }
                 tab= chosePlaceAI1();         
         }
             playBox(tab[0],tab[1]);
@@ -204,26 +209,39 @@ public class Turn {
          for(int i=0;i<tab.size();i+=2){
              countBoxes.add(tab.get(i));
              countBoxes.add(tab.get(i+1));
-             countBoxes.add(count(tab.get(i),tab.get(i+1)));    
+             countBoxes.add(count(tab.get(i),tab.get(i+1),true));    
          }
          return countBoxes;
      }
     
-    public int count (int i,int j){
+    public int count (int i,int j,boolean turn){
         int count=0;
+        int value=cont.getValue();
+        //turn=true if the current player plays
+        if(!turn){
+            if(value==1){
+                value=2;
+            }
+            else
+                value=1;
+        }
+        else
+            count-=countIfHere(i,j);
+        //We change the value if the place is good
+        
+            count+=countPosition(i,j);
         ArrayList<Integer> countTab=new ArrayList();
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
-                    count+=countBoxDirection(i,j,iInc,jInc);
+                    count+=countBoxDirection(i,j,iInc,jInc,value);
                 }
             }      
         }
         return count;
     }
 
-    public int countBoxDirection(int i, int j,int iInc,int jInc){
-        int value=cont.getValue();
+    public int countBoxDirection(int i, int j,int iInc,int jInc,int value){
         int count=0;
             if (playableBoxDirection(i,j,iInc,jInc)){
                 i+=iInc;
@@ -242,6 +260,46 @@ public class Turn {
                 }
             }
             return count;
+    }
+
+    private int countPosition(int i, int j) {
+        if (isCorner(i,j))
+            return 10;
+        else if(isCloseCorner(i,j)){
+            return -4;
+        }
+        else
+            return 0;
+            
+    }
+    
+    public boolean isCloseCorner(int i, int j){
+        if(i==1|| i==6){
+            if(j==0 || j==7)
+                return true;
+            }
+        else if(i==0|| i==7){
+            if(j==1 || j==6)
+                return true;
+            }
+            return false;
+    
+    }
+       public int countIfHere(int i,int j){
+        //on compte le score maximal que peut faire l'adversaire
+        int tab[][]=board.save();
+        playBox(i,j);
+        int count=0;
+        int countCurr=0;
+        for(int iInc=-1;iInc<2;iInc++){
+            for(int jInc=-1;jInc<2;jInc++){
+                count=count(i+iInc,j+jInc,false);
+                if (count>countCurr)
+                    countCurr=count;
+            }
+        }
+        board.reset(tab);
+        return countCurr/2;
     }
 
 }
