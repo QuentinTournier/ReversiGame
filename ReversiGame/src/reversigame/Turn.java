@@ -139,7 +139,7 @@ public class Turn {
         int[] play = new int[2];
         play[0] = countBox.get(0);
         play[1] = countBox.get(1);
-        float max = countBox.get(2);
+        int max = countBox.get(2);
         for (int i = 0; i < countBox.size(); i+=3) {
             if (countBox.get(i+2) > max) {
                 play[0] = countBox.get(i);
@@ -294,7 +294,7 @@ public class Turn {
             return false;
     
     }
-       public int countIfHere(int i,int j,int tour,int value,boolean isTurn){
+       public int countIfHere(int i,int j,int tour,int value,boolean isTurn,int score){
         //on compte le score maximal que peut faire l'adversaire
         if(oobBox(i,j))
             return 0;
@@ -312,10 +312,10 @@ public class Turn {
                 jPlay=possibleMoves.get(iMove+1);
                 count=count(iPlay,jPlay,value);
                 if(tour >0)
-                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn);
+                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn,score);
                 if (isTurn){
                     if (count>countCurr)
-                    countCurr=count;
+                    countCurr=count;//min
                 }
                 else{
                     if (count>-countCurr)
@@ -324,8 +324,51 @@ public class Turn {
                     
         }
         board.reset(tab);
-        return countCurr+count(i,j,value);
+        return countCurr;
     }
+       
+       public int min(int i,int j,int tour,int value){
+         //  https://openclassrooms.com/courses/l-algorithme-min-max
+           int tab[][]=board.save();
+           int iPlay=0;
+           int jPlay=0;
+           int val=count(i,j,value);
+           ArrayList<Integer> possibleMoves=playableBoxes(value);
+           if (tour==0)
+               return eval;
+           int min_val=100;
+           for(int iMove=0;iMove<possibleMoves.size();iMove+=2){
+                iPlay=possibleMoves.get(iMove);
+                jPlay=possibleMoves.get(iMove+1);
+                playBox(i,j);
+                if()
+                if(tour >0)
+                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn,score);
+                if (isTurn){
+                    if (count>countCurr)
+                    countCurr=count;//min
+                }
+                else{
+                    if (count>-countCurr)
+                        countCurr=-count;
+                }
+                board.reset(tab);    
+        }
+           
+       }
+
+
+          val <- Max(etat_du_jeu, profondeur-1)
+
+          si val < min_val alors
+               min_val <- val
+          fin si
+
+          annuler_coup(coup_actuel)
+     fin pour
+
+     renvoyer min_val
+fin fonction
 
        public boolean oobBox(int i, int j){
            if(i<0||i>7||j>7||j<0)
