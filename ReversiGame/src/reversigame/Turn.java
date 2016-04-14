@@ -137,8 +137,8 @@ public class Turn {
     private int[] chosePlaceAI1() {
         ArrayList<Integer> countBox = countBox(cont.getValue());
         int[] play = new int[2];
-        play[0] = (int)Math.round(countBox.get(0));
-        play[1] = (int)Math.round(countBox.get(1));
+        play[0] = countBox.get(0);
+        play[1] = countBox.get(1);
         float max = countBox.get(2);
         for (int i = 0; i < countBox.size(); i+=3) {
             if (countBox.get(i+2) > max) {
@@ -153,6 +153,7 @@ public class Turn {
     
     public void display(){
         System.out.println("\n   0 1 2 3 4 5 6 7");
+        int level=3;
         for(int i=0;i<8;i++){
             System.out.print(i+"  ");
             for(int j=0;j<8;j++){
@@ -161,7 +162,7 @@ public class Turn {
                         if(cont instanceof HumanController)
                             System.out.print("+ ");
                         else
-                            System.out.print(count(i,j,true)+" ");
+                            System.out.print(countIfHere(i,j,level,cont.getValue(),true)+" ");
                     }                       
                     else
                         System.out.print("- ");
@@ -219,36 +220,21 @@ public class Turn {
     }
     
      public ArrayList countBox (int value){
+         int AILevel=5;
          ArrayList<Integer> tab=playableBoxes(value);
-         ArrayList<Float> countBoxes=new ArrayList();
+         ArrayList<Integer> countBoxes=new ArrayList();
          for(int i=0;i<tab.size();i+=2){
-             countBoxes.add((float)tab.get(i));
-             countBoxes.add((float)tab.get(i+1));
-             countBoxes.add(count(tab.get(i),tab.get(i+1),true));    
+             countBoxes.add(tab.get(i));
+             countBoxes.add(tab.get(i+1));
+             countBoxes.add(countIfHere(tab.get(i),tab.get(i+1),AILevel,cont.getValue(),true));    
          }
          return countBoxes;
      }
     
     //return the score of the box
-    public float count (int i,int j,boolean turn){
-        float count=0;
-        int value=cont.getValue();
-        if(oobBox(i,j))
-            return 0;
-        //turn=true if the current player plays
-        if(!turn){
-            if(value==1){
-                value=2;
-            }
-            else
-                value=1;
-        }
-        else
-            count-=countIfHere(i,j,3,cont.getValue());
-        //We change the value if the place is good
-        
+    public int count (int i,int j,int value){
+        int count=0;
         count+=countPosition(i,j);
-        ArrayList<Integer> countTab=new ArrayList();
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
@@ -303,26 +289,35 @@ public class Turn {
             return false;
     
     }
-       public float countIfHere(int i,int j,int tour,int value){
+       public int countIfHere(int i,int j,int tour,int value,boolean isTurn){
         //on compte le score maximal que peut faire l'adversaire
+        if(oobBox(i,j))
+            return 0;
+        value=reverse(value);
+
         int tab[][]=board.save();
         int iPlay=0;
         int jPlay=0;
         playBox(i,j);
-        float count=0;
-        float countCurr=0;
-        ArrayList<Integer> possibleMoves=playableBoxes(reverse(value));
+        int count=0;
+        int countCurr=0;
+        ArrayList<Integer> possibleMoves=playableBoxes(value);
         for(int iMove=0;iMove<possibleMoves.size();iMove+=2){
                 iPlay=possibleMoves.get(iMove);
                 jPlay=possibleMoves.get(iMove+1);
-                count=count(iPlay,jPlay,false);
-                if(value >=0)
-                    count+=countIfHere(iPlay,jPlay,reverse(tour),--value);
-                if (count>countCurr)
-                    countCurr=count;     
+                count=count(iPlay,jPlay,value);
+                /*if(tour >=0)
+                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn);*/
+                if (isTurn){
+                    if (count>countCurr)
+                    countCurr=count;
+                }
+                else
+                    if (count>-countCurr)
+                    countCurr=-count;
         }
         board.reset(tab);
-        return countCurr/2;
+        return count(iPlay,jPlay,value);
     }
 
        public boolean oobBox(int i, int j){
