@@ -239,6 +239,7 @@ public class Turn {
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
                     count+=countBoxDirection(i,j,iInc,jInc,value);
+                    
                 }
             }      
         }
@@ -247,6 +248,8 @@ public class Turn {
 
     public int countBoxDirection(int i, int j,int iInc,int jInc,int value){
         int count=0;
+        int iSave=i;
+        int jSave=j;
             if (playableBoxDirection(i,j,iInc,jInc,value)){
                 i+=iInc;
                 j+=jInc;
@@ -263,6 +266,8 @@ public class Turn {
                     }   
                 }
             }
+            i=iSave;
+            j=jSave;
             return count;
     }
 
@@ -306,18 +311,20 @@ public class Turn {
                 iPlay=possibleMoves.get(iMove);
                 jPlay=possibleMoves.get(iMove+1);
                 count=count(iPlay,jPlay,value);
-                /*if(tour >=0)
-                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn);*/
+                if(tour >0)
+                    count+=countIfHere(iPlay,jPlay,--tour,value,!isTurn);
                 if (isTurn){
                     if (count>countCurr)
                     countCurr=count;
                 }
-                else
+                else{
                     if (count>-countCurr)
-                    countCurr=-count;
+                        countCurr=-count;
+                }
+                    
         }
         board.reset(tab);
-        return count(iPlay,jPlay,value);
+        return countCurr+count(i,j,value);
     }
 
        public boolean oobBox(int i, int j){
