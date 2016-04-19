@@ -35,6 +35,13 @@ public class Board {
     public Box getBox(int i,int j){
         return game[i][j];
     }
+
+    public void setGame(Box[][] game) {
+        this.game = game;
+    }
+    public void setBox(int i,int j,int value){
+        game[i][j].setPawn(value);
+    }
     
     public void display(){
         System.out.println("\n   0 1 2 3 4 5 6 7");
@@ -53,20 +60,20 @@ public class Board {
         
     }
     
-    public int[][] save(){
-        int[][] tab=new int[8][8];
+    public Board save(){
+        Board tab=new Board();
         for(int i=0;i<8;i++){
            for(int j=0;j<8;j++){
-               tab[i][j]=game[i][j].getPawn();
+               tab.setBox(i,j,game[i][j].getPawn());
            }   
         }
         return tab;
     }
     
-    public void reset(int[][] tab){
+    public void reset(Board tab){
         for(int i=0;i<8;i++){
            for(int j=0;j<8;j++){
-               game[i][j].setPawn(tab[i][j]);
+               this.setBox(i,j,tab.getBox(i,j).getPawn());
            }   
         }
     }
@@ -81,4 +88,24 @@ public class Board {
         return score;
     }
     
+    public int score(int team) {
+        int[] score = new int[3];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (this.isCorner(i, j))
+                    score[game[i][j].getPawn()]+=5;
+                else 
+                    score[game[i][j].getPawn()]++;
+            }
+        }
+        return score[team];
+    }
+    
+    
+    public boolean isCorner(int i,int j){
+        if(i==0 || i==7)
+            if(j==0 || j==7)
+                return true;
+        return false;
+    }
 }
