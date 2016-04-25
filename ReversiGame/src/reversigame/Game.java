@@ -21,8 +21,8 @@ public class Game {
 
     public Game() {
         board= new Board();
-        c1=new HumanController(1);
-        c2=new AIController(2);
+        c1=new AIController(1,2);//(num de joueur,niveau AI)
+        c2=new AIController(2,2);
     }
     
     public void doGame(){

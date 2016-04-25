@@ -12,6 +12,7 @@ package reversigame;
  */
 public class AIController implements Controller {
     private int value;
+    private int level;
     
         public AIController(int value) {
         this.value = value;
@@ -20,5 +21,17 @@ public class AIController implements Controller {
      public int getValue(){
          return value;
      }
+
+    public AIController(int value, int level) {
+        this.value = value;
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+    
+     
+     
     
 }

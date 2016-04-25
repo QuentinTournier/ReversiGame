@@ -86,6 +86,9 @@ public class Turn {
         int [] tab;
         this.display();
         ArrayList <Integer> playable=playableBoxes(cont.getValue());
+        if (cont instanceof AIController){
+        
+        
         System.out.println("Positions jouables:");
         for(int i = 0; i < playable.size(); i+=2) {   
             System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
@@ -94,10 +97,10 @@ public class Turn {
             if(cont instanceof HumanController)
                 tab = chosePlaceTextHuman();
             else{
-                tab= chosePlaceAI1();         
+                tab= chosePlaceAI();         
         }
             playBox(tab[0],tab[1]);
-        
+        }
     }
 
     private int[] chosePlaceTextHuman() {
@@ -130,7 +133,7 @@ public class Turn {
         return play;
     }
     private int [] chosePlaceAI1() {
-        int profondeur=3;
+        int profondeur=5;
         return AIPlay(profondeur,cont.getValue());
     }
     
@@ -319,5 +322,19 @@ public class Turn {
                return 1;
            else return 0;
        }
+
+    private int[] chosePlaceAI() {
+        AIController a=((AIController) cont);
+        switch(a.getLevel()){
+            case 1:
+                return chosePlaceAI0();
+            case 2:
+                return chosePlaceAI1();
+            default:
+                return chosePlaceAI0();
+        
+            
+        }
+    }
 }
 
