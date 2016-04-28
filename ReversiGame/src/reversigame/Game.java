@@ -21,7 +21,8 @@ public class Game {
 
     public Game() {
         board= new Board();
-        c1=new AIController(1,2);//(num de joueur,niveau AI)
+        c1 = new HumanController(1);
+        //c1=new AIController(1,3);//(num de joueur,niveau AI)
         c2=new AIController(2,2);
     }
     
@@ -37,8 +38,8 @@ public class Game {
         }while(turn1.canPlay() || turn2.canPlay());
         
         board.display();
-        int score1 = board.score()[1];
-        int score2 = board.score()[2];
+        int score1 = board.finalScore()[1];
+        int score2 = board.finalScore()[2];
         System.out.println("\nScore: " + score1 + " - " + score2);
         if (score1 == score2)
             System.out.println("Tie game");

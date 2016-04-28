@@ -78,7 +78,7 @@ public class Board {
         }
     }
     
-    public int[] score() {
+    public int[] finalScore() {
         int[] score = new int[3];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -94,7 +94,9 @@ public class Board {
             for (int j = 0; j < 8; j++) {
                 if (this.isCorner(i, j))
                     score[game[i][j].getPawn()]+=5;
-                else 
+                else if(this.isCloseCorner(i, j))
+                    score[game[i][j].getPawn()]-=3;
+                else    
                     score[game[i][j].getPawn()]++;
             }
         }
@@ -107,5 +109,18 @@ public class Board {
             if(j==0 || j==7)
                 return true;
         return false;
+    }
+    
+    public boolean isCloseCorner(int i, int j){
+        if(i==1|| i==6){
+            if(j==0 || j==7 || j==1 || j==6)
+                return true;
+            }
+        else if(i==0|| i==7){
+            if(j==0 || j==7 || j==1 || j==6)
+                return true;
+            }
+            return false;
+    
     }
 }

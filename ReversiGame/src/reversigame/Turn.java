@@ -86,21 +86,22 @@ public class Turn {
         int [] tab;
         this.display();
         ArrayList <Integer> playable=playableBoxes(cont.getValue());
-        if (cont instanceof AIController){
-        
-        
-        System.out.println("Positions jouables:");
-        for(int i = 0; i < playable.size(); i+=2) {   
-            System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
-        }  
-        System.out.println("Choisissez où jouer");
-            if(cont instanceof HumanController)
-                tab = chosePlaceTextHuman();
+        if (cont instanceof HumanController){
+                                  
+            System.out.println("Positions jouables:");
+            for(int i = 0; i < playable.size(); i+=2) {   
+                System.out.print("("+playable.get(i)+","+playable.get(i+1)+"),");
+            }  
+            
+            System.out.println("Choisissez où jouer");
+            
+                    tab = chosePlaceTextHuman();
+            }
             else{
                 tab= chosePlaceAI();         
         }
             playBox(tab[0],tab[1]);
-        }
+        
     }
 
     private int[] chosePlaceTextHuman() {
@@ -222,18 +223,7 @@ public class Turn {
             return count;
     }
     
-    public boolean isCloseCorner(int i, int j){
-        if(i==1|| i==6){
-            if(j==0 || j==7)
-                return true;
-            }
-        else if(i==0|| i==7){
-            if(j==1 || j==6)
-                return true;
-            }
-            return false;
     
-    }
        public int[] AIPlay(int tour,int value){
         //on compte le score maximal que peut faire l'adversaire
    
