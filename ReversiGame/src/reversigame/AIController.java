@@ -10,6 +10,7 @@ package reversigame;
  *
  * @author p1306434
  */
+//Cette classe permet de gérer les intelligences artificielles, value sera leur numéro de joueur et level leur niveau
 public class AIController implements Controller {
     private int value;
     private int level;

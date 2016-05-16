@@ -7,6 +7,7 @@
 package reversigame;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -22,12 +23,12 @@ public class Game {
     public Game() {
         board= new Board();
         c1 = new HumanController(1);
-        //c1=new AIController(1,3);//(num de joueur,niveau AI)
-        c2=new AIController(2,2);
+        int level= choseLevelAI();//permet de choisir parmis les 3 niveaux proposés
+        c2=new AIController(2,level);//(num de joueur,niveau AI)
     }
     
     public void doGame(){
-        do{
+        do{//la boucle de jeu, joue jusqu'à ce que plus personne ne puisse mettre un pio,
             turn1= new Turn(c1,board);
             if(turn1.canPlay())        
                 turn1.doTurn();
@@ -37,7 +38,7 @@ public class Game {
         
         }while(turn1.canPlay() || turn2.canPlay());
         
-        board.display();
+        board.display();//affiche le plateau final
         int score1 = board.finalScore()[1];
         int score2 = board.finalScore()[2];
         System.out.println("\nScore: " + score1 + " - " + score2);
@@ -49,6 +50,23 @@ public class Game {
 
     public Board getBoard() {
         return board;
+    }
+
+    private int choseLevelAI() {
+        System.out.println("choisissez le niveau de l'AI \n 1-Facile \n 2-Moyen \n 3-Difficile");
+        int level;
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        try{
+            level=Integer.parseInt(str);
+        }
+        catch(Exception e){
+            System.out.println("choisissez parmis les niveaux possibles");
+            return choseLevelAI();
+        }
+        if (level<1 || level>3)
+            return choseLevelAI();
+        return level;
     }
     
     

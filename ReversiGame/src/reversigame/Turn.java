@@ -7,8 +7,11 @@
 package reversigame;
 
 import static java.lang.Math.random;
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,7 +40,7 @@ public class Turn {
     }
     
     
-    public boolean playableBox(int i,int j,int value){
+    public boolean playableBox(int i,int j,int value){//regarde si la case donnée (i,j) peut -etre joué par le joueur value
         if(board.getGame()[i][j].isEmpty()){
             for(int iInc=-1;iInc<2;iInc++){
                 for(int jInc=-1;jInc<2;jInc++){
@@ -81,7 +84,7 @@ public class Turn {
     }
     
     
-    public void doTurn(){
+    public void doTurn(){//effectue le tour d'un joueur
         boolean done=false;
         int [] tab;
         this.display();
@@ -98,21 +101,37 @@ public class Turn {
                     tab = chosePlaceTextHuman();
             }
             else{
+                try {
+                //on attend pour que le joueur puisse observer (en ms)
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Turn.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 tab= chosePlaceAI();         
         }
             playBox(tab[0],tab[1]);
         
     }
 
-    private int[] chosePlaceTextHuman() {
+    private int[] chosePlaceTextHuman() {//permet de choisir ou le joueur voudra jouer
         ArrayList <Integer> playable=playableBoxes(cont.getValue());
         Scanner sc = new Scanner(System.in);
-        String str = sc.nextLine();
-        int val1 = Integer.parseInt(str);
-        String str2 = sc.nextLine();
-        int val2 = Integer.parseInt(str2);
+        int val1=0;
+        int val2=0;
+        try{// on s'assure que le texte est bien un entier
+            String str = sc.nextLine();
+            val1 = Integer.parseInt(str);
+            String str2 = sc.nextLine();
+            val2 = Integer.parseInt(str2);
+        }
+        catch(Exception e){
+            System.out.println("Veuillez choisir parmis les chois proposés");
+            return chosePlaceTextHuman();
+        }
         
-        for(int i=0;i<playable.size();i+=2){
+
+        
+        for(int i=0;i<playable.size();i+=2){// et on vérifie que la case donnée est bien jouable
             if(val1==playable.get(i)){
                 if (val2==playable.get(i+1)){
                     int tab[]={val1,val2};
@@ -133,8 +152,7 @@ public class Turn {
         
         return play;
     }
-    private int [] chosePlaceAI1() {
-        int profondeur=5;
+    private int [] chosePlaceAI1(int profondeur) {
         return AIPlay(profondeur,cont.getValue());
     }
     
@@ -161,12 +179,12 @@ public class Turn {
         
     }
     
-    public boolean canPlay(){
+    public boolean canPlay(){//on regarde si un joueur peut jouer à ce moment
         return (!playableBoxes(cont.getValue()).isEmpty());
     }
 
 
-    public void playBox(int i, int j){
+    public void playBox(int i, int j){//On place un pion et on retourner ceux que l'on doit retourner
         int iBoucle;
         int jBoucle;
         ArrayList <Integer> direction=playableBoxAllDirection(i,j);
@@ -299,7 +317,7 @@ public class Turn {
         }
            
 
-       public boolean oobBox(int i, int j){
+       public boolean oobBox(int i, int j){//vérifie que la case est dans les limites
            if(i<0||i>7||j>7||j<0)
                return true;
            return false;
@@ -313,13 +331,15 @@ public class Turn {
            else return 0;
        }
 
-    private int[] chosePlaceAI() {
+    private int[] chosePlaceAI() {//On choisit quel IA doit jouer
         AIController a=((AIController) cont);
         switch(a.getLevel()){
             case 1:
                 return chosePlaceAI0();
             case 2:
-                return chosePlaceAI1();
+                return chosePlaceAI1(1);
+            case 3:
+                return chosePlaceAI1(4);
             default:
                 return chosePlaceAI0();
         

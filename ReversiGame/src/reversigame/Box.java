@@ -25,11 +25,11 @@ public class Box {
         this.pawn=0;
     }
     
-    public Boolean isEmpty(){
+    public Boolean isEmpty(){//vérifie  si la case est à 0, c'est à dire si aucun joueur n' y a joué
         return (pawn==0);
     }
     
-    public void affect(int value){
+    public void affect(int value){//met la case à la valeur donnée
         if (this.isEmpty()){
             if (value==1 || value==2)
             {
@@ -38,7 +38,7 @@ public class Box {
         }
     }
     
-    public void reversi(){
+    public void reversi(){//change la valeur du pion en la valeur de l'adversaire
             if (pawn==1)
                 pawn=2;
             else if(pawn==2)
